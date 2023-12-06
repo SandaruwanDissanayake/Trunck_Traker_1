@@ -6,7 +6,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import DashboardScreen from '../screens/DashboardScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
+
 
 
 import {SafeAreaView, StyleSheet, Text} from 'react-native';
