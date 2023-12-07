@@ -14,7 +14,12 @@ import TextInputComponent from '../../components/TextInputComponent';
 import MainBtnComponent from '../../components/MainBtnComponent';
 import PasswordInputComponent from '../../components/PasswordInputField';
 
-export default function SugnUpScreen() {
+type NavigationProps = {
+  navigation:any;
+  navigate:string;
+};
+
+export default function SugnUpScreen({navigation}:NavigationProps ){
   const [email, setEmail] = React.useState('');
   const [userName, setuserName] = React.useState('');
   const [password, setpassword] = React.useState('');
@@ -26,7 +31,7 @@ export default function SugnUpScreen() {
     <>
       <SafeAreaView style={styles.SafeAreaView}>
         <View style={styles.imageView}>
-          <Image source={require('../../assest/login.png')} />
+          <Image  source={require('../../assest/login.png')} />
         </View>
 
         <View style={styles.formView}>
@@ -52,7 +57,6 @@ export default function SugnUpScreen() {
                   keyboardType="email-address"
                   onChangeText={setEmail}
                   value={email}
-                  
                 />
               </View>
             </View>
@@ -70,7 +74,6 @@ export default function SugnUpScreen() {
                   keyboardType="default"
                   onChangeText={setuserName}
                   value={userName}
-                 
                 />
               </View>
             </View>
@@ -87,7 +90,7 @@ export default function SugnUpScreen() {
                   placeholder="Password"
                   keyboardType="visible-password"
                   onChangeText={setpassword}
-                  value={password}  
+                  value={password}
                 />
               </View>
             </View>
@@ -110,22 +113,14 @@ export default function SugnUpScreen() {
               </Text>
             </Text>
 
-            <TouchableOpacity
-              onPress={() => {
-               console.log(email);
-               console.log(password);
-               console.log(userName);
-               
-               
-               
-              }}>
+            <TouchableOpacity onPress={singUpProcess}>
               <MainBtnComponent btnName="Sign Up" />
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                Alert.alert('hello');
-              }}>
+            <TouchableOpacity onPress={() => {
+              navigation.navigate("Login");
+              // navigation.navigate("Navigation");
+            }}>
               <Text
                 style={{
                   fontSize: 12,
@@ -146,6 +141,38 @@ export default function SugnUpScreen() {
     </>
   );
   return ui;
+
+  function singUpProcess() {
+    // const jsRequestObject = {
+    //   email: email,
+    //   userName: userName,
+    //   password: password,
+    // };
+    // const jsonRequestText = JSON.stringify(jsRequestObject);
+    // console.log(jsonRequestText);
+    // const formData = new FormData();
+    // formData.append('jsonRequestText', jsonRequestText);
+
+    // const request = new XMLHttpRequest();
+    // request.onreadystatechange = () => {
+    //   if (request.readyState == 4 && request.status == 200) {
+    //     var jsonResponsetext = request.responseText;
+    //     var jsResponseObject = JSON.parse(jsonResponsetext);
+
+    //     if(jsResponseObject.statusCode==200){
+    //       //AsyncStorage ekat userge data input krnn oni
+    //       //NavigationScreen ekatnavigate krnn oni
+    //     }else{
+    //       Alert.alert('Message', 'Try Again');
+    //     }
+    //   }
+    // };
+
+    // request.open('POST', 'http://10.0.2.2/react_chat_app/signIn.php', true);
+    // request.send(formData);
+navigation.navigate("Navigation");
+
+  }
 }
 const styles = StyleSheet.create({
   textInputBox: {width: '93%', alignItems: 'center', justifyContent: 'center'},
@@ -176,23 +203,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     flex: 1,
+    backgroundColor: '#EDEDED',
   },
   imageView: {
     width: '100%',
-    height: '45%',
+    height: '40%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   formView: {
     width: '100%',
-    height: '55%',
+    height: '60%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
   formMainView: {
     width: '90%',
-    gap: 10,
+    gap: 15,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

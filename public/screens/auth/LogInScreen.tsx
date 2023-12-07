@@ -1,10 +1,15 @@
-import React from "react";
+import React from 'react'
+import { Text, View } from 'react-native';
 
-export default function LogInScreen(){
-    const ui=(
-        <>
-        </>
-    );
-    return ui;
+type NavigationProps = {
+    navigation:any;
+    navigate:string;
+  };
 
+function LogInScreen({navigation}:NavigationProps) {
+  return (
+    <Text>LogInScreen</Text>
+  )
 }
+
+export default LogInScreen

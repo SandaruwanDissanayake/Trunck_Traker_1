@@ -1,15 +1,11 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
 
 //screen
 import DashboardScreen from '../screens/DashboardScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-
-
-import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import MapScreen from '../screens/MapScreen';
 
 const Tab = createBottomTabNavigator();
@@ -19,7 +15,14 @@ function MyTabs() {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
-        tabBarActiveTintColor: 'red',
+        tabBarActiveTintColor: '#CAB08F',
+        tabBarStyle:{
+          height:87,
+          backgroundColor:"#146956",
+          borderTopEndRadius:20,
+          borderTopStartRadius:20,
+        }
+        
       }}>
       <Tab.Screen
         name="Dashboard"
@@ -51,10 +54,13 @@ function MyTabs() {
     </Tab.Navigator>
   );
 }
-export default function Navigation() {
-  return (
-    <NavigationContainer>
-      <MyTabs />
-    </NavigationContainer>
-  );
+
+type NavigationProps = {
+  navigation:any;
+
+};
+
+export default function Navigation({ navigation }: NavigationProps) {
+  return <MyTabs />;
 }
+

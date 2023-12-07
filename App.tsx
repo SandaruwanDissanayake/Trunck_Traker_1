@@ -6,16 +6,41 @@
  */
 
 import React from 'react';
+
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
+import {NavigationContainer} from '@react-navigation/native';
+
 import NavigationScreen from './public/Navigations/Navigation';
 
 import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import HomeScreen from './public/screens/DashboardScreen';
 import MapScreen from './public/screens/MapScreen';
 import SignUpScreen from './public/screens/auth/SignUpScreen';
-export default function App() {
+import LogInScreen from './public/screens/auth/LogInScreen';
+import OTPScreen from './public/screens/auth/OTPScreen';
+import ForgotPasswordScreen from './public/screens/auth/ForgotPasswordScreen';
+import DashboardScreen from './public/screens/DashboardScreen';
+import WelcomeScreen from './public/screens/WelcomeScreen';
+
+
+const Stack = createNativeStackNavigator();
+function App() {
   return (
-    <>
-      <SignUpScreen />
-    </>
+    <NavigationContainer 
+    
+    >
+      <Stack.Navigator initialRouteName="WelcomeScreen" screenOptions={{headerShown:false}}>
+        {/* <Stack.Screen name="Sign In" component={SignIn} /> */}
+        <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
+        <Stack.Screen name="Navigation" component={NavigationScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="Login" component={LogInScreen} />
+        <Stack.Screen name="OTP" component={OTPScreen} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
+export default App;
