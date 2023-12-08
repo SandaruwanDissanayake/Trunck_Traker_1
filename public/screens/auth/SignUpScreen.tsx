@@ -31,7 +31,7 @@ export default function SugnUpScreen({navigation}:NavigationProps ){
     <>
       <SafeAreaView style={styles.SafeAreaView}>
         <View style={styles.imageView}>
-          <Image  source={require('../../assest/login.png')} />
+          <Image  source={require('../../assest/signUp.png')} />
         </View>
 
         <View style={styles.formView}>

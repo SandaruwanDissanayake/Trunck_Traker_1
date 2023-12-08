@@ -22,6 +22,7 @@ import OTPScreen from './public/screens/auth/OTPScreen';
 import ForgotPasswordScreen from './public/screens/auth/ForgotPasswordScreen';
 import DashboardScreen from './public/screens/DashboardScreen';
 import WelcomeScreen from './public/screens/WelcomeScreen';
+import ChangePassword from './public/screens/auth/ChangePassword';
 
 
 const Stack = createNativeStackNavigator();
@@ -39,6 +40,8 @@ function App() {
         <Stack.Screen name="Login" component={LogInScreen} />
         <Stack.Screen name="OTP" component={OTPScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="ChangePassword" component={ChangePassword} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

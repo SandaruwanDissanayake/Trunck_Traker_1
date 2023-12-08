@@ -31,6 +31,7 @@ function MyTabs() {
           tabBarIcon: ({color, size}) => (
             <Icon name="view-dashboard" size={30} color={color} />
           ),
+          
         }}
       />
       <Tab.Screen
