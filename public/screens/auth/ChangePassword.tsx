@@ -122,9 +122,13 @@ function ChangePassword({navigation}: NavigationProps) {
     //   }
     // };
 
-    // request.open('POST', 'http://10.0.2.2/react_chat_app/signIn.php', true);
+    // request.open('POST', 'http://10.0.2.2/research_01_project/auth/signupProcess.php', true);
     // request.send(formData);
-    navigation.navigate('Navigation');
+   
+   
+   
+   
+    // navigation.navigate('Navigation');
   }
 }
 const styles = StyleSheet.create({

@@ -15,14 +15,18 @@ import MainBtnComponent from '../../components/MainBtnComponent';
 import PasswordInputComponent from '../../components/PasswordInputField';
 
 type NavigationProps = {
-  navigation:any;
-  navigate:string;
+  navigation: any;
+  navigate: string;
 };
 
-export default function SugnUpScreen({navigation}:NavigationProps ){
+export default function SugnUpScreen({navigation}: NavigationProps) {
   const [email, setEmail] = React.useState('');
   const [userName, setuserName] = React.useState('');
   const [password, setpassword] = React.useState('');
+  // const [err,setError]=React.useState(true);
+  const [userNameError, setUserNameError] = React.useState(false);
+  const [emailError, setEmailError] = React.useState(false);
+  const [passwordError, setPasswordError] = React.useState(true);
 
   const placeholder = 'Email';
   const keyboardType = 'numeric';
@@ -31,7 +35,7 @@ export default function SugnUpScreen({navigation}:NavigationProps ){
     <>
       <SafeAreaView style={styles.SafeAreaView}>
         <View style={styles.imageView}>
-          <Image  source={require('../../assest/signUp.png')} />
+          <Image source={require('../../assest/signUp.png')} />
         </View>
 
         <View style={styles.formView}>
@@ -55,8 +59,13 @@ export default function SugnUpScreen({navigation}:NavigationProps ){
                 <TextInputComponent
                   placeholder="Email"
                   keyboardType="email-address"
-                  onChangeText={setEmail}
+                  // onChangeText={setEmail}
                   value={email}
+                  onChangeText={(newText: string) => {
+                    setEmail(newText);
+                    setEmailError(false);
+                  }}
+                  error={emailError}
                 />
               </View>
             </View>
@@ -72,7 +81,11 @@ export default function SugnUpScreen({navigation}:NavigationProps ){
                 <TextInputComponent
                   placeholder="User Name"
                   keyboardType="default"
-                  onChangeText={setuserName}
+                  onChangeText={(newText: string) => {
+                    setuserName(newText);
+                    setUserNameError(false);
+                  }}
+                  error={userNameError}
                   value={userName}
                 />
               </View>
@@ -86,14 +99,20 @@ export default function SugnUpScreen({navigation}:NavigationProps ){
                 />
               </View>
               <View style={styles.textInputBox}>
-                <PasswordInputComponent
-                  placeholder="Password"
-                  keyboardType="visible-password"
-                  onChangeText={setpassword}
-                  value={password}
-                />
+              <PasswordInputComponent
+                onChangeText={(newText: string) => {
+                  setpassword(newText);
+                  setPasswordError(false);
+                }}
+                error={passwordError}
+                value={password}
+              />
               </View>
             </View>
+       
+       
+              
+
 
             <Text
               style={{
@@ -117,10 +136,11 @@ export default function SugnUpScreen({navigation}:NavigationProps ){
               <MainBtnComponent btnName="Sign Up" />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => {
-              navigation.navigate("Login");
-              // navigation.navigate("Navigation");
-            }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('Login');
+                // navigation.navigate("Navigation");
+              }}>
               <Text
                 style={{
                   fontSize: 12,
@@ -143,35 +163,52 @@ export default function SugnUpScreen({navigation}:NavigationProps ){
   return ui;
 
   function singUpProcess() {
-    // const jsRequestObject = {
-    //   email: email,
-    //   userName: userName,
-    //   password: password,
-    // };
-    // const jsonRequestText = JSON.stringify(jsRequestObject);
-    // console.log(jsonRequestText);
-    // const formData = new FormData();
-    // formData.append('jsonRequestText', jsonRequestText);
+    const jsRequestObject = {
+      email: email,
+      userName: userName,
+      password: password,
+    };
+    const jsonRequestText = JSON.stringify(jsRequestObject);
 
-    // const request = new XMLHttpRequest();
-    // request.onreadystatechange = () => {
-    //   if (request.readyState == 4 && request.status == 200) {
-    //     var jsonResponsetext = request.responseText;
-    //     var jsResponseObject = JSON.parse(jsonResponsetext);
+    const formData = new FormData();
+    formData.append('jsonRequestText', jsonRequestText);
 
-    //     if(jsResponseObject.statusCode==200){
-    //       //AsyncStorage ekat userge data input krnn oni
-    //       //NavigationScreen ekatnavigate krnn oni
-    //     }else{
-    //       Alert.alert('Message', 'Try Again');
-    //     }
-    //   }
-    // };
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = () => {
+      if (request.readyState == 4 && request.status == 200) {
+        var jsonResponsetext = request.responseText;
+        var jsResponseObject = JSON.parse(jsonResponsetext);
 
-    // request.open('POST', 'http://10.0.2.2/react_chat_app/signIn.php', true);
-    // request.send(formData);
-navigation.navigate("Navigation");
+        if (jsResponseObject.statusCode == 200) {
+          console.log(jsResponseObject);
 
+          //AsyncStorage ekat userge data input krnn oni
+          //NavigationScreen ekatnavigate krnn oni
+        } else if (jsResponseObject.statusCode == 1) {
+          console.log(jsResponseObject);
+          setEmailError(true);
+          Alert.alert('Message', jsResponseObject.message);
+        } else if (jsResponseObject.statusCode == 2) {
+          console.log(jsResponseObject);
+          setEmailError(true);
+          Alert.alert('Message', jsResponseObject.message);
+        }else if (jsResponseObject.statusCode == 3) {
+          console.log(jsResponseObject);
+          setPasswordError(true);
+          Alert.alert('Message', jsResponseObject.message);
+        }  else {
+          console.log(jsResponseObject);
+        }
+      }
+    };
+
+    request.open(
+      'POST',
+      'http://10.0.2.2/research_01_project/auth/signupProcess.php',
+      true,
+    );
+    request.send(formData);
+    //navigation.navigate("Navigation");
   }
 }
 const styles = StyleSheet.create({
