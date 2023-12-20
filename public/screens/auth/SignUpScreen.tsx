@@ -13,6 +13,7 @@ import {
 import TextInputComponent from '../../components/TextInputComponent';
 import MainBtnComponent from '../../components/MainBtnComponent';
 import PasswordInputComponent from '../../components/PasswordInputField';
+import NotificationMessage from '../../components/NotificationMessage';
 
 type NavigationProps = {
   navigation: any;
@@ -26,13 +27,18 @@ export default function SugnUpScreen({navigation}: NavigationProps) {
   // const [err,setError]=React.useState(true);
   const [userNameError, setUserNameError] = React.useState(false);
   const [emailError, setEmailError] = React.useState(false);
-  const [passwordError, setPasswordError] = React.useState(true);
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [errMessage, seterrorMessage] = React.useState('error');
 
   const placeholder = 'Email';
   const keyboardType = 'numeric';
   // const iconName = '@.png';
   const ui = (
     <>
+      {(userNameError || emailError || passwordError) && (
+        <NotificationMessage message={errMessage} />
+      )}
+
       <SafeAreaView style={styles.SafeAreaView}>
         <View style={styles.imageView}>
           <Image source={require('../../assest/signUp.png')} />
@@ -84,6 +90,7 @@ export default function SugnUpScreen({navigation}: NavigationProps) {
                   onChangeText={(newText: string) => {
                     setuserName(newText);
                     setUserNameError(false);
+                    checkUserName();
                   }}
                   error={userNameError}
                   value={userName}
@@ -99,20 +106,16 @@ export default function SugnUpScreen({navigation}: NavigationProps) {
                 />
               </View>
               <View style={styles.textInputBox}>
-              <PasswordInputComponent
-                onChangeText={(newText: string) => {
-                  setpassword(newText);
-                  setPasswordError(false);
-                }}
-                error={passwordError}
-                value={password}
-              />
+                <PasswordInputComponent
+                  onChangeText={(newText: string) => {
+                    setpassword(newText);
+                    setPasswordError(false);
+                  }}
+                  error={passwordError}
+                  value={password}
+                />
               </View>
             </View>
-       
-       
-              
-
 
             <Text
               style={{
@@ -162,6 +165,41 @@ export default function SugnUpScreen({navigation}: NavigationProps) {
   );
   return ui;
 
+  function checkUserName() {
+    if (userName != '') {
+      const request = new XMLHttpRequest();
+
+      request.onreadystatechange = () => {
+        if (request.readyState == 4 && request.status == 200) {
+          var response = request.responseText;
+          console.log(response);
+        }
+      };
+
+      request.open(
+        'GET',
+        'http://10.0.2.2/TrunckTracker/auth/signup/checkUserNameProcess.php?userName=' +
+          userName,
+        true,
+      );
+      request.send();
+    }
+  }
+
+  function validation() {
+    if (email == '') {
+      seterrorMessage('Pleace Enter Your Email');
+      setEmailError(true);
+    } else if (password == '') {
+      seterrorMessage('Pleace enter Your New Password');
+      setPasswordError(true);
+    } else if (userName == '') {
+      seterrorMessage('Pleace enter Your UserName');
+    } else {
+      singUpProcess();
+    }
+  }
+
   function singUpProcess() {
     const jsRequestObject = {
       email: email,
@@ -171,32 +209,36 @@ export default function SugnUpScreen({navigation}: NavigationProps) {
     const jsonRequestText = JSON.stringify(jsRequestObject);
 
     const formData = new FormData();
-    formData.append('jsonRequestText', jsonRequestText);
+    formData.append('JsonObject', jsonRequestText);
 
     const request = new XMLHttpRequest();
     request.onreadystatechange = () => {
       if (request.readyState == 4 && request.status == 200) {
         var jsonResponsetext = request.responseText;
+
+        console.log(jsonResponsetext);
+        
         var jsResponseObject = JSON.parse(jsonResponsetext);
 
         if (jsResponseObject.statusCode == 200) {
-          console.log(jsResponseObject);
+         
 
           //AsyncStorage ekat userge data input krnn oni
           //NavigationScreen ekatnavigate krnn oni
         } else if (jsResponseObject.statusCode == 1) {
           console.log(jsResponseObject);
+          seterrorMessage(jsResponseObject.message);
           setEmailError(true);
-          Alert.alert('Message', jsResponseObject.message);
         } else if (jsResponseObject.statusCode == 2) {
           console.log(jsResponseObject);
+          seterrorMessage(jsResponseObject.message);
           setEmailError(true);
-          Alert.alert('Message', jsResponseObject.message);
-        }else if (jsResponseObject.statusCode == 3) {
+        } else if (jsResponseObject.statusCode == 3) {
           console.log(jsResponseObject);
           setPasswordError(true);
-          Alert.alert('Message', jsResponseObject.message);
-        }  else {
+          seterrorMessage(jsResponseObject.message);
+        } else {
+          seterrorMessage(jsResponseObject.message);
           console.log(jsResponseObject);
         }
       }
@@ -204,7 +246,7 @@ export default function SugnUpScreen({navigation}: NavigationProps) {
 
     request.open(
       'POST',
-      'http://10.0.2.2/research_01_project/auth/signupProcess.php',
+      'http://10.0.2.2/TrunckTracker/auth/signup/signupProcess.php',
       true,
     );
     request.send(formData);

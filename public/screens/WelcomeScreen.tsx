@@ -8,15 +8,18 @@ import {
   View,
 } from 'react-native';
 import MainBtnComponent from '../components/MainBtnComponent';
+import Test from '../components/NotificationMessage';
+import NotificationMessage from '../components/NotificationMessage';
 
 type NavigationProps = {
-    navigation:  any;
-    navigate:string;
-  };
+  navigation: any;
+  navigate: string;
+};
 
-function WelcomeScreen({navigation}:NavigationProps) {
+function WelcomeScreen({navigation}: NavigationProps) {
   return (
     <SafeAreaView style={styles.SafeAreaView}>
+   
       <View style={styles.View1}>
         <Text style={styles.text1}>Navigating Paths to</Text>
         <Text style={styles.text2}> Coexistence.</Text>
@@ -35,6 +38,7 @@ function WelcomeScreen({navigation}:NavigationProps) {
         <Text style={styles.copyrightTxt}>
           Powered by Helixaa Incorporation
         </Text>
+        
       </View>
     </SafeAreaView>
   );

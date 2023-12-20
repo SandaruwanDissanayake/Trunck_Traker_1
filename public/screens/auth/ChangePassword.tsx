@@ -6,11 +6,10 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import TextInputComponent from '../../components/TextInputComponent';
+
 import MainBtnComponent from '../../components/MainBtnComponent';
 import PasswordInputComponent from '../../components/PasswordInputField';
 
@@ -128,7 +127,7 @@ function ChangePassword({navigation}: NavigationProps) {
    
    
    
-    // navigation.navigate('Navigation');
+    navigation.navigate('Navigation');
   }
 }
 const styles = StyleSheet.create({
