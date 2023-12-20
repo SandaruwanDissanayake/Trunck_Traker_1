@@ -17,7 +17,6 @@ import {enableLatestRenderer} from 'react-native-maps';
 
 enableLatestRenderer();
 
-
 import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import HomeScreen from './public/screens/DashboardScreen';
 import MapScreen from './public/screens/MapScreen';
@@ -33,16 +32,11 @@ import Test2 from './public/screens/testScreen/test2';
 import Test from './public/components/NotificationMessage';
 
 const Stack = createNativeStackNavigator();
+
 function App() {
   return (
-
-
-    
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="WelcomeScreen"
-        screenOptions={{headerShown: false}}>
-       
+      <Stack.Navigator initialRouteName="WelcomeScreen" screenOptions={{headerShown:false}} >
         <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
         <Stack.Screen name="Navigation" component={NavigationScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
@@ -51,7 +45,6 @@ function App() {
         <Stack.Screen name="OTP" component={OTPScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="ChangePassword" component={ChangePassword} />
-        
       </Stack.Navigator>
     </NavigationContainer>
   );

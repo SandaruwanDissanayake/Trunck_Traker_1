@@ -91,7 +91,7 @@ function LogInScreen({navigation}: NavigationProps) {
                 </Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={singUpProcess}>
+            <TouchableOpacity onPress={logInProcess}>
               <MainBtnComponent btnName="Log In" />
             </TouchableOpacity>
 
@@ -120,36 +120,36 @@ function LogInScreen({navigation}: NavigationProps) {
     </>
   );
   return ui;
+  function logInProcess() {
+    navigation.navigate('ForgotPassword');
 
-  function singUpProcess() {
     // const jsRequestObject = {
-    //   email: email,
     //   userName: userName,
     //   password: password,
     // };
-    // const jsonRequestText = JSON.stringify(jsRequestObject);
-    // console.log(jsonRequestText);
-    // const formData = new FormData();
-    // formData.append('jsonRequestText', jsonRequestText);
 
-    // const request = new XMLHttpRequest();
+    // const jsonRequestText = JSON.stringify(jsRequestObject);
+
+    // var form = new FormData();
+    // form.append('JsonObject', jsonRequestText);
+
+    // var request = new XMLHttpRequest();
     // request.onreadystatechange = () => {
     //   if (request.readyState == 4 && request.status == 200) {
-    //     var jsonResponsetext = request.responseText;
-    //     var jsResponseObject = JSON.parse(jsonResponsetext);
+    //     var response = request.responseText;
+    //     console.log(response);
 
-    //     if(jsResponseObject.statusCode==200){
-    //       //AsyncStorage ekat userge data input krnn oni
-    //       //NavigationScreen ekatnavigate krnn oni
-    //     }else{
-    //       Alert.alert('Message', 'Try Again');
+    //     var responseObject = JSON.parse(response);
+    //     if (responseObject.statusCode == 200) {
+    //       //async storage ekat userge user id ek yawnn oni
+    //       //navigation screen ekat navigate kkrnn oni
+    //     } else {
+    //       console.log(responseObject.message);
     //     }
     //   }
     // };
-
-    // request.open('POST', 'http://10.0.2.2/react_chat_app/signIn.php', true);
-    // request.send(formData);
-    navigation.navigate('ForgotPassword');
+    // request.open('POST', 'http://10.0.2.2/TrunckTracker/test.php', true);
+    // request.send(form);
   }
 }
 const styles = StyleSheet.create({
