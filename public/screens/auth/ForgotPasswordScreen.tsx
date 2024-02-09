@@ -13,6 +13,8 @@ import {
 import TextInputComponent from '../../components/TextInputComponent';
 import MainBtnComponent from '../../components/MainBtnComponent';
 import PasswordInputComponent from '../../components/PasswordInputField';
+import NotificationMessage from '../../components/NotificationMessage';
+import {get} from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 type NavigationProps = {
   navigation: any;
@@ -21,12 +23,16 @@ type NavigationProps = {
 
 function ForgotPasswordScreen({navigation}: NavigationProps) {
   const [email, setEmail] = React.useState('');
+  const [anyError, setAnyError] = React.useState(false);
+  const [emailError, setEmailError] = React.useState(false);
+  const [errMessage, seterrorMessage] = React.useState('error');
 
   const placeholder = 'Email';
   const keyboardType = 'numeric';
   // const iconName = '@.png';
   const ui = (
     <>
+      {(emailError || anyError) && <NotificationMessage message={errMessage} />}
       <SafeAreaView style={styles.SafeAreaView}>
         <View style={styles.imageView}>
           <Image source={require('../../assest/Forgotpassword.png')} />
@@ -42,22 +48,17 @@ function ForgotPasswordScreen({navigation}: NavigationProps) {
               }}>
               <Text style={styles.title}>Forgot {'\n'}Password ?</Text>
 
-
-
               <Text
-              style={{
-                fontSize: 14,
-                lineHeight: 20,
-                fontWeight: '500',
-                color: '#000000',
-              }}>
-              Don’t worry it happens. Please enter the address associated with
-              your account.
-            </Text>
-
+                style={{
+                  fontSize: 14,
+                  lineHeight: 20,
+                  fontWeight: '500',
+                  color: '#000000',
+                }}>
+                Don’t worry it happens. Please enter the address associated with
+                your account.
+              </Text>
             </View>
-
-           
 
             <View style={styles.mainInputBox}>
               <View style={styles.inputImagBox}>
@@ -70,13 +71,18 @@ function ForgotPasswordScreen({navigation}: NavigationProps) {
                 <TextInputComponent
                   placeholder="Email"
                   keyboardType="email-address"
-                  onChangeText={setEmail}
+                  // onChangeText={setEmail}
                   value={email}
+                  onChangeText={(newText: string) => {
+                    setEmail(newText);
+                    setEmailError(false);
+                  }}
+                  error={emailError}
                 />
               </View>
             </View>
 
-            <TouchableOpacity onPress={ForgotPasswordProcess}>
+            <TouchableOpacity onPress={forgotPasswordProcess}>
               <MainBtnComponent btnName="Submit" />
             </TouchableOpacity>
           </View>
@@ -86,35 +92,54 @@ function ForgotPasswordScreen({navigation}: NavigationProps) {
   );
   return ui;
 
-  function ForgotPasswordProcess() {
-    // const jsRequestObject = {
-    //   email: email,
-    //   userName: userName,
-    //   password: password,
-    // };
-    // const jsonRequestText = JSON.stringify(jsRequestObject);
-    // console.log(jsonRequestText);
-    // const formData = new FormData();
-    // formData.append('jsonRequestText', jsonRequestText);
+  async function forgotPasswordProcess() {
+    // if (email != '') {
+    //   const request = new XMLHttpRequest();
 
-    // const request = new XMLHttpRequest();
-    // request.onreadystatechange = () => {
-    //   if (request.readyState == 4 && request.status == 200) {
-    //     var jsonResponsetext = request.responseText;
-    //     var jsResponseObject = JSON.parse(jsonResponsetext);
-
-    //     if(jsResponseObject.statusCode==200){
-    //       //AsyncStorage ekat userge data input krnn oni
-    //       //NavigationScreen ekatnavigate krnn oni
-    //     }else{
-    //       Alert.alert('Message', 'Try Again');
+    //   request.onreadystatechange = () => {
+    //     if (request.readyState == 4 && request.status == 200) {
+    //       var response = request.responseText;
+    //       console.log(response);
     //     }
-    //   }
-    // };
+    //   };
 
-    // request.open('POST', 'http://10.0.2.2/react_chat_app/signIn.php', true);
-    // request.send(formData);
-    navigation.navigate('OTP');
+    //   request.open(
+    //     'GET',
+    //     'http://10.0.2.2/TrunckTracker/auth/changePassword/snedVerificationCode.php?email=' +
+    //       email,
+    //     true,
+    //   );
+    //   request.send();
+    // }
+
+    const obj={
+      email:email,
+    }
+    navigation.navigate("OTP",obj);
+    // if (email != '') {
+    //   try {
+    //     const respons = await fetch(
+    //       'http://10.0.2.2/TrunckTracker/auth/changePassword/sendVerificationCode.php?email=' + email,
+    //       {method: 'GET'},
+    //     );
+    //     if (respons.ok) {
+    //       try {
+    //         const data = await respons.json();
+    //         console.log(data);
+    //         navigation.navigate("OTP",email);
+            
+            
+    //       } catch (jsonError) {
+    //         console.log(jsonError);
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.log('Error parsing JSON', error);
+    //   }
+    // } else {
+    //   setEmailError(true);
+    //   seterrorMessage('Enter Your Email');
+    // }
   }
 }
 const styles = StyleSheet.create({
@@ -173,8 +198,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 54,
     color: '#292929',
-    marginBottom:20,
-    marginTop:-20,
+    marginBottom: 20,
+    marginTop: -20,
   },
 });
 

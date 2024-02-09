@@ -10,6 +10,10 @@ import {
 import MainBtnComponent from '../components/MainBtnComponent';
 import Test from '../components/NotificationMessage';
 import NotificationMessage from '../components/NotificationMessage';
+import LoaderScreen from '../components/LoaderScreen';
+
+import getData from '../Methods/AsyncStorage/GetData';
+// import removeValue from '../Methods/AsyncStorage/removeData';
 
 type NavigationProps = {
   navigation: any;
@@ -17,9 +21,11 @@ type NavigationProps = {
 };
 
 function WelcomeScreen({navigation}: NavigationProps) {
+
+
   return (
     <SafeAreaView style={styles.SafeAreaView}>
-   
+      {/* <LoaderScreen /> */}
       <View style={styles.View1}>
         <Text style={styles.text1}>Navigating Paths to</Text>
         <Text style={styles.text2}> Coexistence.</Text>
@@ -30,7 +36,8 @@ function WelcomeScreen({navigation}: NavigationProps) {
       <View style={styles.View3}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('SignUp');
+            // navigation.navigate('Navigation');
+            navigation.navigate('Login');
           }}>
           <MainBtnComponent btnName="Continue" />
         </TouchableOpacity>
@@ -38,7 +45,6 @@ function WelcomeScreen({navigation}: NavigationProps) {
         <Text style={styles.copyrightTxt}>
           Powered by Helixaa Incorporation
         </Text>
-        
       </View>
     </SafeAreaView>
   );

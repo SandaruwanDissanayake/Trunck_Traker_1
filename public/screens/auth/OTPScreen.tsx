@@ -13,17 +13,27 @@ import {
 import TextInputComponent from '../../components/TextInputComponent';
 import MainBtnComponent from '../../components/MainBtnComponent';
 import PasswordInputComponent from '../../components/PasswordInputField';
+import {useRoute} from '@react-navigation/native';
+import maskEmail from '../../Methods/maskEmail';
 
-type NavigationProps = {
+type NavigationProps = { 
   navigation: any;
   navigate: string;
+  obj: String;
 };
 
 function OTPScreen({navigation}: NavigationProps) {
+  const route = useRoute();
+
+  // Access the parameters passed during navigation
+  const {email}: any = route.params;
+
   const [OTPcode, setOTPcode] = React.useState('');
 
   const placeholder = 'Email';
   const keyboardType = 'numeric';
+
+  const maskemail = maskEmail(email);
   // const iconName = '@.png';
   const ui = (
     <>
@@ -40,7 +50,7 @@ function OTPScreen({navigation}: NavigationProps) {
                 alignItems: 'flex-start',
                 width: '100%',
               }}>
-              <Text style={styles.title}>Enter {'\n'}Verification Code</Text>
+              <Text style={styles.title}>Enter {'\n'}Verification</Text>
 
               <Text
                 style={{
@@ -49,7 +59,7 @@ function OTPScreen({navigation}: NavigationProps) {
                   fontWeight: '500',
                   color: '#000000',
                 }}>
-                Your Verification code has been sent to sa********21@gmail.com
+                Your Verification code has been sent to {maskemail}
               </Text>
             </View>
 
@@ -80,37 +90,55 @@ function OTPScreen({navigation}: NavigationProps) {
   );
   return ui;
 
-  function OTPScreenProcess() {
-    // const jsRequestObject = {
-    //   email: email,
-    //   userName: userName,
-    //   password: password,
-    // };
-    // const jsonRequestText = JSON.stringify(jsRequestObject);
-    // console.log(jsonRequestText);
-    // const formData = new FormData();
-    // formData.append('jsonRequestText', jsonRequestText);
+  // Example usage
+  // const email = 'sampleemail@example.com';
+  // const maskedEmail = maskEmail(email);
 
-    // const request = new XMLHttpRequest();
-    // request.onreadystatechange = () => {
-    //   if (request.readyState == 4 && request.status == 200) {
-    //     var jsonResponsetext = request.responseText;
-    //     var jsResponseObject = JSON.parse(jsonResponsetext);
+  // console.log(maskedEmail);
 
-    //     if(jsResponseObject.statusCode==200){
-    //       //AsyncStorage ekat userge data input krnn oni
-    //       //NavigationScreen ekatnavigate krnn oni
-    //     }else{
-    //       Alert.alert('Message', 'Try Again');
-    //     }
-    //   }
-    // };
+  async function OTPScreenProcess() {
 
-    // request.open('POST', 'http://10.0.2.2/react_chat_app/signIn.php', true);
-    // request.send(formData);
-    navigation.navigate('ChangePassword');
+    const obj={
+      email:email
+    }
+
+    navigation.navigate('ChangePassword',obj);
+
+    const jsRequestObject = {
+      email: email,
+      verificationCode: OTPcode,
+    };
+
+    const jsonRequestText = JSON.stringify(jsRequestObject);
+    console.log(jsonRequestText);
+
+    const form=new FormData();
+    form.append('jsonRequestText',jsonRequestText);
+
+    
+    if (email != '' && OTPcode != '') {
+      try {
+        const response = await fetch('http://10.0.2.2/TrunckTracker/auth/changePassword/checkVerificationCode.php', {
+          method: 'POST',
+          body: form,
+        });
+
+        if (response.ok) {
+          try {
+            const data = await response.json();
+            console.log(data);
+            
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 }
+
 const styles = StyleSheet.create({
   textInputBox: {width: '93%', alignItems: 'center', justifyContent: 'center'},
   inputImagBox: {

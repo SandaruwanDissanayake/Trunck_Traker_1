@@ -5,19 +5,19 @@ const requestCameraPermission = async () => {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title: 'Cool Photo App Camera Permission',
+        title: 'Trunck Traker App Location Permission',
         message:
-          'Cool Photo App needs access to your camera ' +
-          'so you can take awesome pictures.',
+          'Trunck Traker App needs access to your location ' +
+          'so we can save your life.',
         buttonNeutral: 'Ask Me Later',
         buttonNegative: 'Cancel',
         buttonPositive: 'OK',
       },
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('You can use the camera');
+      console.log('You can use Trunck Traker');
     } else {
-      console.log('Camera permission denied');
+      console.log('Location permission denied');
     }
   } catch (err) {
     console.warn(err);

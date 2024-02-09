@@ -21,7 +21,8 @@ function MyTabs() {
           backgroundColor:"#146956",
           borderTopEndRadius:20,
           borderTopStartRadius:20,
-        }
+        },
+        headerShown:false
         
       }}>
       <Tab.Screen

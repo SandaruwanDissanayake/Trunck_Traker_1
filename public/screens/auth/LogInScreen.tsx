@@ -13,6 +13,10 @@ import {
 import TextInputComponent from '../../components/TextInputComponent';
 import MainBtnComponent from '../../components/MainBtnComponent';
 import PasswordInputComponent from '../../components/PasswordInputField';
+import NotificationMessage from '../../components/NotificationMessage';
+import LoaderScreen from '../../components/LoaderScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import storeData from '../../Methods/AsyncStorage/SetData';
 
 type NavigationProps = {
   navigation: any;
@@ -20,12 +24,22 @@ type NavigationProps = {
 };
 
 function LogInScreen({navigation}: NavigationProps) {
-  const [email, setEmail] = React.useState('');
   const [userName, setuserName] = React.useState('');
   const [password, setpassword] = React.useState('');
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [errMessage, seterrorMessage] = React.useState('error');
+  const [anyError, setAnyError] = React.useState(false);
+  const [userNameError, setUserNameError] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const ui = (
     <>
+      {(userNameError || passwordError || anyError) && (
+        <NotificationMessage message={errMessage} />
+      )}
+
+      {loading ? <LoaderScreen /> : null}
+
       <SafeAreaView style={styles.SafeAreaView}>
         <View style={styles.imageView}>
           <Image source={require('../../assest/signUp.png')} />
@@ -53,7 +67,13 @@ function LogInScreen({navigation}: NavigationProps) {
                 <TextInputComponent
                   placeholder="User Name"
                   keyboardType="default"
-                  onChangeText={setuserName}
+                  // onChangeText={setuserName}
+
+                  onChangeText={(newText: string) => {
+                    setuserName(newText);
+                    setUserNameError(false);
+                  }}
+                  error={userNameError}
                   value={userName}
                 />
               </View>
@@ -68,9 +88,11 @@ function LogInScreen({navigation}: NavigationProps) {
               </View>
               <View style={styles.textInputBox}>
                 <PasswordInputComponent
-                  placeholder="Password"
-                  keyboardType="visible-password"
-                  onChangeText={setpassword}
+                  onChangeText={(newText: string) => {
+                    setpassword(newText);
+                    setPasswordError(false);
+                  }}
+                  error={passwordError}
                   value={password}
                 />
               </View>
@@ -120,36 +142,69 @@ function LogInScreen({navigation}: NavigationProps) {
     </>
   );
   return ui;
-  function logInProcess() {
-    navigation.navigate('ForgotPassword');
+  async function logInProcess() {
+    setLoading(true);
+    const jsRequestObject = {
+      userName: userName,
+      password: password,
+    };
 
-    // const jsRequestObject = {
-    //   userName: userName,
-    //   password: password,
-    // };
+    const jsonRequestText = JSON.stringify(jsRequestObject);
 
-    // const jsonRequestText = JSON.stringify(jsRequestObject);
+    try {
+      const form = new FormData();
+      form.append('jsonRequestText', jsonRequestText);
 
-    // var form = new FormData();
-    // form.append('JsonObject', jsonRequestText);
+      const response = await fetch(
+        'http://10.0.2.2/TrunckTracker/auth/login/login.php',
+        {
+          method: 'POST',
+          body: form,
+        },
+      );
 
-    // var request = new XMLHttpRequest();
-    // request.onreadystatechange = () => {
-    //   if (request.readyState == 4 && request.status == 200) {
-    //     var response = request.responseText;
-    //     console.log(response);
+      if (response.ok) {
+        try {
+          const data = await response.json(); // Parse JSON response
+          setLoading(false);
+          if (data.statusCode == 200) {
+            console.log(data);
+            const obj = {
+              userId: data.userId,
+            };
+            await AsyncStorage.setItem('user', JSON.stringify(obj));
+            navigation.navigate('Navigation');
 
-    //     var responseObject = JSON.parse(response);
-    //     if (responseObject.statusCode == 200) {
-    //       //async storage ekat userge user id ek yawnn oni
-    //       //navigation screen ekat navigate kkrnn oni
-    //     } else {
-    //       console.log(responseObject.message);
-    //     }
-    //   }
-    // };
-    // request.open('POST', 'http://10.0.2.2/TrunckTracker/test.php', true);
-    // request.send(form);
+            //async storage ekat yawnn oni user id ek
+            //navigate krnn oni navigation scerren ekat
+          } else if (data.statusCode == 1) {
+            console.log(data.message);
+            setUserNameError(true);
+            seterrorMessage(data.message);
+          } else if (data.statusCode == 3) {
+            setPasswordError(true);
+            seterrorMessage(data.message);
+          } else {
+            console.log(data);
+
+            setAnyError(data.message);
+          }
+        } catch (jsonError) {
+          // Handle JSON parsing errors
+          console.error('Error parsing JSON:', jsonError);
+        }
+      } else {
+        // Handle non-OK responses
+        console.error('Error:', response.statusText);
+
+        // Log the entire response text for further inspection
+        const responseText = await response.text();
+        console.log('Response Text:', responseText);
+      }
+    } catch (error) {
+      // Handle network or other errors
+      console.error('An error occurred:', error);
+    }
   }
 }
 const styles = StyleSheet.create({

@@ -8,6 +8,8 @@ import MapView, {
 } from 'react-native-maps';
 import getCurrentLocation from '../Methods/GetCurrentLocation';
 import requestCameraPermission from '../Methods/Permission';
+import MapScreenNotification from '../components/MapScreenNotification';
+
 
 async function userLocation() {
   const location = await getCurrentLocation();
@@ -41,35 +43,53 @@ export default function MapScreen() {
   // FindMyCoordinates();
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        provider="google"
-        showsUserLocation
-        initialRegion={state.droplocationCord}
-        userLocationUpdateInterval={5000}
-        followsUserLocation
-        showsMyLocationButton={true}>
-        <Marker coordinate={state.pickupCords} title="Elephant Location" />
-        <Marker coordinate={state.droplocationCord} title="Your Location" />
-        {state.userLocation && (
-          <Marker
-            coordinate={state.userLocation}
-            title="Your Current Location"
-            pinColor="blue"
+     
+      <View style={styles.mapContainer}>
+        <MapView
+          style={styles.map}
+          provider="google"
+          showsUserLocation
+          initialRegion={state.droplocationCord}
+          userLocationUpdateInterval={5000}
+          followsUserLocation
+          showsMyLocationButton={true}>
+          <Marker coordinate={state.pickupCords} title="Elephant Location" />
+          <Marker coordinate={state.droplocationCord} title="Your Location" />
+          {state.userLocation && (
+            <Marker
+              coordinate={state.userLocation}
+              title="Your Current Location"
+              pinColor="blue"
+            />
+          )}
+          <Circle
+            center={state.droplocationCord}
+            radius={100}
+            strokeWidth={400}
+            strokeColor="#f1d3d3"
+            fillColor="#080707"
           />
-        )}
-        <Circle
-          center={state.droplocationCord}
-          radius={100}
-          strokeWidth={400}
-          strokeColor="#f1d3d3"
-          fillColor="#080707"
-        />
-      </MapView>
+        </MapView>
+      </View>
+      <View style={styles.notificationContainer}>
+        <MapScreenNotification/>
+      </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
+ 
+  notificationContainer: {
+    height: '13%',
+    // backgroundColor: 'red',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems:'center',
+
+  },
+  mapContainer: {
+    height: '87%',
+  },
   container: {
     flex: 1,
   },

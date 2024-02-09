@@ -14,6 +14,7 @@ import TextInputComponent from '../../components/TextInputComponent';
 import MainBtnComponent from '../../components/MainBtnComponent';
 import PasswordInputComponent from '../../components/PasswordInputField';
 import NotificationMessage from '../../components/NotificationMessage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type NavigationProps = {
   navigation: any;
@@ -29,13 +30,14 @@ export default function SugnUpScreen({navigation}: NavigationProps) {
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
   const [errMessage, seterrorMessage] = React.useState('error');
+  const [anyError, setAnyError] = React.useState(false);
 
   const placeholder = 'Email';
   const keyboardType = 'numeric';
   // const iconName = '@.png';
   const ui = (
     <>
-      {(userNameError || emailError || passwordError) && (
+      {(userNameError || emailError || passwordError || anyError) && (
         <NotificationMessage message={errMessage} />
       )}
 
@@ -165,7 +167,7 @@ export default function SugnUpScreen({navigation}: NavigationProps) {
   );
   return ui;
 
-  function checkUserName() {
+  async function checkUserName() {
     if (userName != '') {
       const request = new XMLHttpRequest();
 
@@ -200,7 +202,10 @@ export default function SugnUpScreen({navigation}: NavigationProps) {
     }
   }
 
-  function singUpProcess() {
+  async function singUpProcess() {
+    setUserNameError(false);
+    setEmailError(false);
+    setPasswordError(false);
     const jsRequestObject = {
       email: email,
       userName: userName,
@@ -209,48 +214,50 @@ export default function SugnUpScreen({navigation}: NavigationProps) {
     const jsonRequestText = JSON.stringify(jsRequestObject);
 
     const formData = new FormData();
-    formData.append('JsonObject', jsonRequestText);
+    formData.append('jsonRequestText', jsonRequestText);
 
-    const request = new XMLHttpRequest();
-    request.onreadystatechange = () => {
-      if (request.readyState == 4 && request.status == 200) {
-        var jsonResponsetext = request.responseText;
+    try {
+      const response = await fetch(
+        'http://10.0.2.2/TrunckTracker/auth/signup/signupProcess.php',
+        {
+          method: 'POST',
+          body: formData,
+        },
+      );
 
-        console.log(jsonResponsetext);
-        
-        var jsResponseObject = JSON.parse(jsonResponsetext);
-
-        if (jsResponseObject.statusCode == 200) {
-         
-
-          //AsyncStorage ekat userge data input krnn oni
-          //NavigationScreen ekatnavigate krnn oni
-        } else if (jsResponseObject.statusCode == 1) {
-          console.log(jsResponseObject);
-          seterrorMessage(jsResponseObject.message);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.statusCode == 200) {
+          const obj = {
+            userId: data.userId,
+          };
+          try {
+            await AsyncStorage.setItem('user', JSON.stringify(obj));
+            navigation.navigate('Navigation');
+          } catch (error) {
+            console.log(error);
+          }
+        } else if (data.statusCode == 1) {
+          console.log(data);
+          seterrorMessage(data.message);
+          setUserNameError(true);
+        } else if (data.statusCode == 2) {
+          console.log(data);
+          seterrorMessage(data.message);
           setEmailError(true);
-        } else if (jsResponseObject.statusCode == 2) {
-          console.log(jsResponseObject);
-          seterrorMessage(jsResponseObject.message);
-          setEmailError(true);
-        } else if (jsResponseObject.statusCode == 3) {
-          console.log(jsResponseObject);
+        } else if (data.statusCode == 3) {
+          console.log(data);
           setPasswordError(true);
-          seterrorMessage(jsResponseObject.message);
+          seterrorMessage(data.message);
         } else {
-          seterrorMessage(jsResponseObject.message);
-          console.log(jsResponseObject);
+          seterrorMessage(data.message);
+          setAnyError(true);
+          console.log(data);
         }
       }
-    };
-
-    request.open(
-      'POST',
-      'http://10.0.2.2/TrunckTracker/auth/signup/signupProcess.php',
-      true,
-    );
-    request.send(formData);
-    //navigation.navigate("Navigation");
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 const styles = StyleSheet.create({

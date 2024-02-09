@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Button,
@@ -12,6 +12,8 @@ import {
 
 import MainBtnComponent from '../../components/MainBtnComponent';
 import PasswordInputComponent from '../../components/PasswordInputField';
+import {useRoute} from '@react-navigation/native';
+import NotificationMessage from '../../components/NotificationMessage';
 
 type NavigationProps = {
   navigation: any;
@@ -19,11 +21,23 @@ type NavigationProps = {
 };
 
 function ChangePassword({navigation}: NavigationProps) {
+  const route = useRoute();
+  const {email}: any = route.params;
+
+  console.log(email);
+
   const [newPassword, setnewPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
-
+  const [anyError, setEnyError] = React.useState(false);
+  const [newPasswordError, setNewPasswordError] = React.useState(false);
+  const [confrioamPsswordError, setConfrioamPsswordError] =
+    React.useState(false);
+  const [errMessage, setErrorMessage] = React.useState('Error');
   const ui = (
     <>
+      {(anyError || newPasswordError || confrioamPsswordError) && (
+        <NotificationMessage message={errMessage} />
+      )}
       <SafeAreaView style={styles.SafeAreaView}>
         <View style={styles.imageView}>
           <Image source={require('../../assest/Changepassword.png')} />
@@ -60,9 +74,12 @@ function ChangePassword({navigation}: NavigationProps) {
               </View>
               <View style={styles.textInputBox}>
                 <PasswordInputComponent
-                  placeholder="Password"
-                  keyboardType="visible-password"
-                  onChangeText={setnewPassword}
+                  onChangeText={(newText: string) => {
+                    setnewPassword(newText);
+                    setConfrioamPsswordError(false);
+                    setNewPasswordError(false);
+                  }}
+                  error={newPasswordError}
                   value={newPassword}
                 />
               </View>
@@ -77,15 +94,20 @@ function ChangePassword({navigation}: NavigationProps) {
               </View>
               <View style={styles.textInputBox}>
                 <PasswordInputComponent
+                  onChangeText={(newText: string) => {
+                    setConfirmPassword(newText);
+                    // setPasswordError(false);
+                    setConfrioamPsswordError(false);
+                    setNewPasswordError(false);
+                  }}
+                  error={confrioamPsswordError}
                   placeholder="Confirm Password"
-                  keyboardType="visible-password"
-                  onChangeText={setConfirmPassword}
                   value={confirmPassword}
                 />
               </View>
             </View>
 
-            <TouchableOpacity onPress={ChangePasswordProcess}>
+            <TouchableOpacity onPress={checkMatchPassword}>
               <MainBtnComponent btnName="Submit" />
             </TouchableOpacity>
           </View>
@@ -95,39 +117,57 @@ function ChangePassword({navigation}: NavigationProps) {
   );
   return ui;
 
-  function ChangePasswordProcess() {
-    // const jsRequestObject = {
-    //   email: email,
-    //   userName: userName,
-    //   password: password,
-    // };
-    // const jsonRequestText = JSON.stringify(jsRequestObject);
-    // console.log(jsonRequestText);
-    // const formData = new FormData();
-    // formData.append('jsonRequestText', jsonRequestText);
+  function checkMatchPassword() {
+    if (newPassword != '' && confirmPassword != '') {
+      if (newPassword == confirmPassword) {
+        ChangePasswordProcess();
+      } else {
+        console.log('not match password');
+        setConfrioamPsswordError(true);
+        setNewPasswordError(true);
+        setErrorMessage('Password not matched');
+      }
+    }
+    if (newPassword == '') {
+      setNewPasswordError(true);
+      setErrorMessage('enter new password');
+      console.log('enter new password');
+    } else if (confirmPassword == '') {
+      setConfrioamPsswordError(true);
+      setErrorMessage('Re-Enter New Password');
+    }
+  }
 
-    // const request = new XMLHttpRequest();
-    // request.onreadystatechange = () => {
-    //   if (request.readyState == 4 && request.status == 200) {
-    //     var jsonResponsetext = request.responseText;
-    //     var jsResponseObject = JSON.parse(jsonResponsetext);
+  async function ChangePasswordProcess() {
+    const jsRequestObject = {
+      email: email,
+      newPassword: newPassword,
+      reEnterPassword: confirmPassword,
+    };
+    const jsonRequestText = JSON.stringify(jsRequestObject);
+    console.log(jsonRequestText);
+    try {
+      const formData = new FormData();
+      formData.append('jsonRequestText', jsonRequestText);
 
-    //     if(jsResponseObject.statusCode==200){
-    //       //AsyncStorage ekat userge data input krnn oni
-    //       //NavigationScreen ekatnavigate krnn oni
-    //     }else{
-    //       Alert.alert('Message', 'Try Again');
-    //     }
-    //   }
-    // };
+      const response = await fetch('http://10.0.2.2/TrunckTracker/auth/changePassword/changePassword.php', {
+        method: 'POST',
+        body: formData,
+      });
+      if (response.ok) {
+        try {
+          const data = await response.json();
+          console.log(data);
+          
+        } catch (error) {
+          console.log(error);
+        }
+      }
 
-    // request.open('POST', 'http://10.0.2.2/research_01_project/auth/signupProcess.php', true);
-    // request.send(formData);
-   
-   
-   
-   
-    navigation.navigate('Navigation');
+      navigation.navigate('Navigation');
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 const styles = StyleSheet.create({
