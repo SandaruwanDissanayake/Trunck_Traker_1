@@ -10,60 +10,106 @@ import getCurrentLocation from '../Methods/GetCurrentLocation';
 import requestCameraPermission from '../Methods/Permission';
 import MapScreenNotification from '../components/MapScreenNotification';
 
-
 async function userLocation() {
-  const location = await getCurrentLocation();
-  console.log(location);
+  let location = await getCurrentLocation();
+  // console.log(location.latitude);
+  return location;
 }
 requestCameraPermission();
-userLocation();
+// const userCord=userLocation();
+// console.log(userCord);
 
 export default function MapScreen() {
-  const [state, setState] = useState({
-    pickupCords: {
-      latitude: 6.927079,
-      longitude: 79.861244,
+  let usercordLatitude;
+  let usercordLongitude;
+
+  const [userCorde, setUserCorde] = useState({
+    location: {
+      latitude: 0,
+      longitude: 0,
       latitudeDelta: 0.015,
       longitudeDelta: 0.0121,
     },
-    droplocationCord: {
-      latitude: 37.4217937,
+  });
+  useEffect(() => {
+    async function fetchUserLocation() {
+      try {
+        const location = await getCurrentLocation();
+        setUserCorde(prevState => ({
+          ...prevState,
+          location: {
+            latitude: Number(location.latitude),
+            longitude: Number(location.longitude),
+            latitudeDelta: 0.015,
+            longitudeDelta: 0.0121,
+          },  
+        }));
+        console.log(location);
+      } catch (error) {
+        console.error('Error fetching user location:', error);
+      }
+    }
+    fetchUserLocation();
+  }, []);
+
+  
+
+  const [elephantCorde, setelephantCorde] = useState({
+    location: {
+      latitude: 37.4210037,
       longitude: -122.083922,
       latitudeDelta: 0.015,
       longitudeDelta: 0.0121,
     },
-    userLocation: null,
   });
-  const INISIAL = {
-    latitude: 30.7336,
-    longitude: 76.7794,
-    latitudeDelta: 0.015,
-    longitudeDelta: 0.0121,
-  };
+
+  // const [state, setState] = useState({
+  //   user: {
+  //     latitude: usercordLatitude,
+  //     longitude: usercordLongitude,
+  //     latitudeDelta: 0.015,
+  //     longitudeDelta: 0.0121,
+  //   },
+  //   droplocationCord: {
+  //     latitude: 37.4217937,
+  //     longitude: -122.083922,
+  //     latitudeDelta: 0.015,
+  //     longitudeDelta: 0.0121,
+  //   },
+  //   userLocation: null,
+  // });
+  // const INISIAL = {
+  //   latitude: 30.7336,
+  //   longitude: 76.7794,
+  //   latitudeDelta: 0.015,
+  //   longitudeDelta: 0.0121,
+  // };
   // FindMyCoordinates();
   return (
     <View style={styles.container}>
-     
       <View style={styles.mapContainer}>
         <MapView
           style={styles.map}
           provider="google"
           showsUserLocation
-          initialRegion={state.droplocationCord}
+          initialRegion={userCorde.location}
           userLocationUpdateInterval={5000}
           followsUserLocation
           showsMyLocationButton={true}>
-          <Marker coordinate={state.pickupCords} title="Elephant Location" />
-          <Marker coordinate={state.droplocationCord} title="Your Location" />
-          {state.userLocation && (
+          <Marker
+            coordinate={elephantCorde.location}
+            title="Elephant Location"
+          />
+          <Marker coordinate={userCorde.location} title="Your Location" />
+          {userCorde.location && (
             <Marker
-              coordinate={state.userLocation}
+              coordinate={userCorde.location}
               title="Your Current Location"
               pinColor="blue"
             />
           )}
           <Circle
-            center={state.droplocationCord}
+            center={userCorde.location}
             radius={100}
             strokeWidth={400}
             strokeColor="#f1d3d3"
@@ -72,20 +118,18 @@ export default function MapScreen() {
         </MapView>
       </View>
       <View style={styles.notificationContainer}>
-        <MapScreenNotification/>
+        <MapScreenNotification />
       </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
- 
   notificationContainer: {
     height: '13%',
     // backgroundColor: 'red',
     display: 'flex',
     justifyContent: 'center',
-    alignItems:'center',
-
+    alignItems: 'center',
   },
   mapContainer: {
     height: '87%',
