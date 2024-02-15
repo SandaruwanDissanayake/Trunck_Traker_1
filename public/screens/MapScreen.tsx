@@ -15,13 +15,12 @@ async function userLocation() {
   // console.log(location.latitude);
   return location;
 }
-requestCameraPermission();
+// requestCameraPermission();
 // const userCord=userLocation();
 // console.log(userCord);
 
 export default function MapScreen() {
-  let usercordLatitude;
-  let usercordLongitude;
+  
 
   const [userCorde, setUserCorde] = useState({
     location: {
@@ -54,14 +53,39 @@ export default function MapScreen() {
 
   
 
-  const [elephantCorde, setelephantCorde] = useState({
-    location: {
-      latitude: 37.4210037,
-      longitude: -122.083922,
-      latitudeDelta: 0.015,
-      longitudeDelta: 0.0121,
+  // const [elephantCorde, setelephantCorde] = useState({
+  //   location: {
+  //     latitude: 37.4210037,
+  //     longitude: -122.083922,
+  //     latitudeDelta: 0.015,
+  //     longitudeDelta: 0.0121,
+  //   },
+  // });
+
+
+  const [elephants, setElephants] = useState([
+    {
+      id: 1,
+      name:"Raja",
+      location: {
+        latitude: 37.4210037,
+        longitude: -122.083922,
+        latitudeDelta: 0.015,
+        longitudeDelta: 0.0121,
+      },
     },
-  });
+    {
+      id: 2,
+      name:"muthu manika",
+      location: {
+        latitude: 37.422,
+        longitude: -122.084,
+        latitudeDelta: 0.015,
+        longitudeDelta: 0.0121,
+      },
+    },
+    // Add more elephants as needed
+  ]);
 
   // const [state, setState] = useState({
   //   user: {
@@ -96,10 +120,13 @@ export default function MapScreen() {
           userLocationUpdateInterval={5000}
           followsUserLocation
           showsMyLocationButton={true}>
-          <Marker
-            coordinate={elephantCorde.location}
-            title="Elephant Location"
+          {elephants.map(elephant=>(
+            <Marker key={elephant.id}
+            coordinate={elephant.location}
+            title={elephant.name}
           />
+          ))}
+          
           <Marker coordinate={userCorde.location} title="Your Location" />
           {userCorde.location && (
             <Marker
